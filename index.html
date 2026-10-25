@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>FRIDAY AI</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{
+
+ margin:0;min-height:100vh;background:#050b18;color:#eaf6ff;
+
+ font-family:Arial,sans-serif;display:flex;justify-content:center;
+
+}
+
+.app{width:100%;max-width:650px;padding:22px;display:flex;flex-direction:column;min-height:100vh}
+
+header{display:flex;align-items:center;gap:14px;border-bottom:1px solid #153b60;padding-bottom:18px}
+
+.robot{width:58px;height:58px;border:2px solid #36cfff;border-radius:20px;display:grid;place-items:center;font-size:30px;box-shadow:0 0 22px #0786d966}
+
+h1{font-size:23px;margin:0;color:#65d9ff;letter-spacing:3px}
+
+small{color:#83a9c7}
+
+.status{margin-left:auto;color:#62f7c0;font-size:12px}
+
+.welcome{margin:26px 0;padding:20px;border:1px solid #17456c;border-radius:18px;background:linear-gradient(135deg,#0b2340,#081324)}
+
+.welcome h2{margin:0 0 10px;color:#65d9ff}
+
+#chat{flex:1;min-height:220px;max-height:48vh;overflow:auto;padding:8px 0}
+
+.msg{padding:13px 15px;margin:10px 0;border-radius:15px;line-height:1.5;white-space:pre-wrap}
+
+.bot{background:#0c2038;border:1px solid #17456c}
+
+.user{background:#103d5a;margin-left:35px}
+
+.controls{display:flex;gap:8px;margin-top:16px}
+
+input{min-width:0;flex:1;background:#091629;border:1px solid #28618b;border-radius:13px;padding:14px;color:white;font-size:16px}
+
+button{border:0;border-radius:13px;padding:12px;background:#087eaf;color:white;font-size:15px}
+
+button:active{opacity:.7}
+
+.tools{display:flex;gap:8px;margin-top:10px}
+
+.tools button{background:#102942;border:1px solid #245176;flex:1}
+
+footer{text-align:center;color:#6887a2;font-size:12px;margin-top:18px}
+
+</style>
+
+</head>
+
+<body>
+
+<main class="app">
+
+<header>
+
+ <div class="robot">🤖</div>
+
+ <div><h1>FRIDAY</h1><small>Asistente personal · Prototipo 1.0</small></div>
+
+ <div class="status">● EN LÍNEA</div>
+
+</header>
+
+<section class="welcome">
+
+ <h2>Hola, estoy aquí.</h2>
+
+ Soy FRIDAY. Esta es mi primera interfaz. Escríbeme algo para probar el chat.
+
+</section>
+
+<div id="chat" aria-live="polite">
+
+ <div class="msg bot">¡Hola! 💙 Ya estoy funcionando en esta página. Por ahora soy un prototipo: todavía no estoy conectada a una IA real.</div>
+
+</div>
+
+<form id="form" class="controls">
+
+ <input id="message" placeholder="Escribe un mensaje..." autocomplete="off" required>
+
+ <button type="submit">Enviar</button>
+
+</form>
+
+<div class="tools">
+
+ <button id="voice">🔊 Leer respuesta</button>
+
+ <button id="clear">Limpiar chat</button>
+
+</div>
+
+<footer>FRIDAY AI · Proyecto personal</footer>
+
+</main>
+
+<script>
+
+const chat=document.getElementById('chat');
+
+const input=document.getElementById('message');
+
+let lastReply='Hola. Soy FRIDAY, tu asistente en construcción.';
+
+function addMessage(text,kind){
+
+ const div=document.createElement('div');
+
+ div.className='msg '+kind;
+
+ div.textContent=text;
+
+ chat.appendChild(div);
+
+ chat.scrollTop=chat.scrollHeight;
+
+}
+
+document.getElementById('form').addEventListener('submit',function(e){
+
+ e.preventDefault();
+
+ const text=input.value.trim();
+
+ if(!text)return;
+
+ addMessage(text,'user');
+
+ input.value='';
+
+ let reply='Todavía estoy aprendiendo. Aún necesito conectarme a una IA real para responder a cualquier pregunta.';
+
+ if(/hola|buenas/i.test(text))reply='¡Hola! 💙 Soy FRIDAY. ¿Qué hacemos hoy?';
+
+ else if(/tu nombre|quién eres|quien eres/i.test(text))reply='Soy FRIDAY, tu asistente personal en construcción. 🤖';
+
+ else if(/hora/i.test(text))reply='Puedes consultar la hora que muestra tu dispositivo. Todavía no tengo acceso directo al reloj.';
+
+ else if(/gracias/i.test(text))reply='¡De nada! 💙 Seguiremos construyéndome paso a paso.';
+
+ lastReply=reply;
+
+ addMessage(reply,'bot');
+
+});
+
+document.getElementById('voice').addEventListener('click',function(){
+
+ if(!('speechSynthesis' in window)){alert('Tu navegador no admite lectura de voz.');return;}
+
+ speechSynthesis.cancel();
+
+ const utterance=new SpeechSynthesisUtterance(lastReply);
+
+ utterance.lang='es-ES';
+
+ speechSynthesis.speak(utterance);
+
+});
+
+document.getElementById('clear').addEventListener('click',function(){
+
+ chat.replaceChildren();
+
+ addMessage('Chat limpio. ¡Seguimos! 💙','bot');
